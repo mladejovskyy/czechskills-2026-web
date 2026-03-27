@@ -6,7 +6,10 @@ import { Button } from "@/components/ui/button";
 import { deleteVehicle } from "@/actions/kellycars/vehicles";
 import type { KellyCarsVehicle, Media } from "@/generated/prisma/client";
 
-type Vehicle = KellyCarsVehicle & { image: Media | null };
+type Vehicle = Omit<KellyCarsVehicle, "pricePerDay"> & {
+  pricePerDay: number;
+  image: Media | null;
+};
 
 export function VehicleTable({ vehicles }: { vehicles: Vehicle[] }) {
   const router = useRouter();
