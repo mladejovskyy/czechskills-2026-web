@@ -1,0 +1,275 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ─── Auth & Multi-tenancy ────────────────────────────────────────
+
+model User {
+  id        String       @id @default(cuid())
+  username  String       @unique
+  name      String?
+  password  String
+  createdAt DateTime     @default(now()) @map("created_at")
+  updatedAt DateTime     @updatedAt @map("updated_at")
+  tenants   UserTenant[]
+  blogPosts BlogPost[]   @relation("author")
+
+  @@map("users")
+}
+
+model Tenant {
+  id             String       @id @default(cuid())
+  slug           String       @unique
+  name           String
+  domain         String?
+  apiKey         String       @unique @default(cuid()) @map("api_key")
+  createdAt      DateTime     @default(now()) @map("created_at")
+  updatedAt      DateTime     @updatedAt @map("updated_at")
+  users          UserTenant[]
+
+  blogPosts          BlogPost[]
+  categories         Category[]
+  tags               Tag[]
+  faqCategories      FaqCategory[]
+  faqItems           FaqItem[]
+  media              Media[]
+  redirects          Redirect[]
+  kellyCarsVehicles      KellyCarsVehicle[]
+  kellyCarsReservations  KellyCarsReservation[]
+
+  @@map("tenants")
+}
+
+model UserTenant {
+  id        String   @id @default(cuid())
+  userId    String   @map("user_id")
+  tenantId  String   @map("tenant_id")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, tenantId])
+  @@map("user_tenants")
+}
+
+// ─── Blog ────────────────────────────────────────────────────────
+
+model Category {
+  id          String   @id @default(cuid())
+  tenantId    String   @map("tenant_id")
+  name        String
+  slug        String
+  description String?
+  metaTitle   String?  @map("meta_title")
+  metaDesc    String?  @map("meta_description")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  tenant    Tenant     @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  blogPosts BlogPost[]
+
+  @@unique([tenantId, slug])
+  @@map("categories")
+}
+
+model Tag {
+  id        String   @id @default(cuid())
+  tenantId  String   @map("tenant_id")
+  name      String
+  slug      String
+  createdAt DateTime @default(now()) @map("created_at")
+
+  tenant    Tenant     @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  blogPosts BlogPost[] @relation("BlogPostTags")
+
+  @@unique([tenantId, slug])
+  @@map("tags")
+}
+
+model BlogPost {
+  id           String         @id @default(cuid())
+  tenantId     String         @map("tenant_id")
+  authorId     String         @map("author_id")
+  categoryId   String         @map("category_id")
+  status       BlogPostStatus @default(DRAFT)
+  title        String
+  slug         String
+  excerpt      String?
+  content      String
+  coverImageId String?        @map("cover_image_id")
+  videoUrl     String?        @map("video_url")
+  voiceOverUrl String?        @map("voice_over_url")
+  metaTitle    String?        @map("meta_title")
+  metaDesc     String?        @map("meta_description")
+  seoGeoScore  Int?           @map("seo_geo_score")
+  publishedAt  DateTime?      @map("published_at")
+  createdAt    DateTime       @default(now()) @map("created_at")
+  updatedAt    DateTime       @updatedAt @map("updated_at")
+
+  tenant     Tenant        @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  author     User          @relation("author", fields: [authorId], references: [id])
+  category   Category      @relation(fields: [categoryId], references: [id])
+  coverImage Media?        @relation("coverImage", fields: [coverImageId], references: [id], onDelete: SetNull)
+  tags       Tag[]         @relation("BlogPostTags")
+  faqs       BlogPostFaq[]
+
+  @@unique([tenantId, slug])
+  @@map("blog_posts")
+}
+
+enum BlogPostStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+model BlogPostFaq {
+  id         String @id @default(cuid())
+  blogPostId String @map("blog_post_id")
+  question   String
+  answer     String
+  sortOrder  Int    @default(0) @map("sort_order")
+
+  blogPost BlogPost @relation(fields: [blogPostId], references: [id], onDelete: Cascade)
+
+  @@map("blog_post_faqs")
+}
+
+// ─── FAQ ─────────────────────────────────────────────────────────
+
+model FaqCategory {
+  id          String   @id @default(cuid())
+  tenantId    String   @map("tenant_id")
+  name        String
+  slug        String
+  description String?
+  metaTitle   String?  @map("meta_title")
+  metaDesc    String?  @map("meta_description")
+  sortOrder   Int      @default(0) @map("sort_order")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  tenant Tenant    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  items  FaqItem[]
+
+  @@unique([tenantId, slug])
+  @@map("faq_categories")
+}
+
+model FaqItem {
+  id            String   @id @default(cuid())
+  tenantId      String   @map("tenant_id")
+  faqCategoryId String   @map("faq_category_id")
+  question      String
+  slug          String
+  answer        String
+  metaTitle     String?  @map("meta_title")
+  metaDesc      String?  @map("meta_description")
+  sortOrder     Int      @default(0) @map("sort_order")
+  published     Boolean  @default(true)
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  tenant      Tenant      @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  faqCategory FaqCategory @relation(fields: [faqCategoryId], references: [id], onDelete: Cascade)
+
+  @@unique([tenantId, slug])
+  @@map("faq_items")
+}
+
+// ─── KellyCars (Car Rental) ──────────────────────────────────────
+
+model KellyCarsVehicle {
+  id           String   @id @default(cuid())
+  tenantId     String   @map("tenant_id")
+  brand        String
+  model        String
+  year         Int
+  slug         String
+  category     String
+  seats        Int
+  fuelType     String   @map("fuel_type")
+  transmission KellyCarsTransmission
+  pricePerDay  Decimal  @map("price_per_day") @db.Decimal(10, 2)
+  description  String?
+  imageId      String?  @map("image_id")
+  available    Boolean  @default(true)
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  tenant       Tenant                @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  image        Media?                @relation("vehicleImage", fields: [imageId], references: [id], onDelete: SetNull)
+  reservations KellyCarsReservation[]
+
+  @@unique([tenantId, slug])
+  @@map("kelly_cars_vehicles")
+}
+
+enum KellyCarsTransmission {
+  MANUAL
+  AUTOMATIC
+}
+
+model KellyCarsReservation {
+  id            String   @id @default(cuid())
+  tenantId      String   @map("tenant_id")
+  vehicleId     String   @map("vehicle_id")
+  status        String   @default("pending")
+  customerName  String   @map("customer_name")
+  customerEmail String   @map("customer_email")
+  customerPhone String   @map("customer_phone")
+  pickupDate    DateTime @map("pickup_date")
+  returnDate    DateTime @map("return_date")
+  totalPrice    Decimal  @map("total_price") @db.Decimal(10, 2)
+  notes         String?
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  tenant  Tenant           @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  vehicle KellyCarsVehicle @relation(fields: [vehicleId], references: [id])
+
+  @@map("kelly_cars_reservations")
+}
+
+// ─── Media ───────────────────────────────────────────────────────
+
+model Media {
+  id        String   @id @default(cuid())
+  tenantId  String   @map("tenant_id")
+  url       String
+  alt       String
+  createdAt DateTime @default(now()) @map("created_at")
+
+  tenant          Tenant     @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  coverOfBlogPost BlogPost[]         @relation("coverImage")
+  imageOfVehicle  KellyCarsVehicle[] @relation("vehicleImage")
+
+  @@map("media")
+}
+
+// ─── Redirects (Zero 404 Policy) ─────────────────────────────────
+
+model Redirect {
+  id        String       @id @default(cuid())
+  tenantId  String       @map("tenant_id")
+  fromPath  String       @map("from_path")
+  toPath    String       @map("to_path")
+  type      RedirectType
+  createdAt DateTime     @default(now()) @map("created_at")
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@unique([tenantId, fromPath])
+  @@map("redirects")
+}
+
+enum RedirectType {
+  PERMANENT // 301
+  TEMPORARY // 302
+}

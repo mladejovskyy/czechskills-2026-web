@@ -1,0 +1,283 @@
+/* Ensure the navbar stays fixed at the top */
+.nav {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 1000;
+    transition: background-color 0.25s ease, transform 0.15s ease;
+    background-color: transparent;
+    /*backdrop-filter: blur(10px);*/
+    transform: translateY(32px);
+}
+
+/* Background color change on scroll */
+.nav.scrolled {
+    background-color: #060606;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Small box-shadow on bottom */
+    transform: translateY(0);
+}
+
+nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 20px !important;
+}
+
+.nav-left {
+    display: flex;
+    align-items: center;
+    gap: 72px;
+    transition: gap 0.2s ease;
+}
+
+.nav.scrolled .nav-left {
+    gap: 48px;
+}
+
+/* Logo */
+.nav-logo {
+    /*min-height: 36px;*/
+    /*max-height: 36px;*/
+    cursor: pointer;
+    transform: scale(1.4);
+    transition: transform 0.2s ease;
+}
+.nav.scrolled .nav-logo {
+    transform: scale(1);
+}
+
+/* Logo color transitions */
+.nav-logo path {
+    fill: #fff;
+    transition: fill 0.15s ease-in-out;
+}
+
+.nav.scrolled .nav-logo path {
+    fill: #060606;
+}
+
+/* Default styles for the navigation links */
+nav ul {
+    display: flex;
+    align-items: center;
+    gap: 32px;
+}
+
+nav ul li, nav ul li a {
+    list-style: none;
+    cursor: pointer;
+    color: #fff;
+    font-weight: 600;
+    text-transform: uppercase;
+    transition: color 0.15s ease-in-out;
+}
+
+
+nav ul li span {
+    transition: color 0.15s ease-in-out;
+}
+
+.nav.scrolled ul li.nav-link:hover, .nav.scrolled ul li.nav-link:hover > .nav-dropdown-trigger > a {
+    color: #D9A23E;
+}
+
+.nav.scrolled ul li.nav-link:not(.nav-dropdown):hover a {
+    color: #D9A23E;
+}
+
+/* Dropdown menu styles */
+.nav-dropdown {
+    position: relative;
+}
+
+.nav-dropdown-trigger {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+}
+
+.nav-dropdown-icon {
+    transition: transform 0.2s ease;
+}
+
+.nav-dropdown-icon.open {
+    transform: rotate(180deg);
+}
+
+.nav-dropdown-menu {
+    position: absolute;
+    top: 100%;
+    right: -40px;
+    margin-top: 8px;
+    background-color: #060606;
+    backdrop-filter: blur(10px);
+    padding: 16px 12px;
+    min-width: 210px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.nav.scrolled .nav-dropdown-menu {
+    background-color: #060606;
+}
+
+.nav-dropdown-menu li {
+    padding: 0;
+    width: 100%;
+}
+
+.nav-dropdown-menu li a {
+    display: block;
+    padding: 10px 20px;
+    color: #fff;
+    text-transform: capitalize;
+    text-align: center;
+    transition: background-color 0.15s ease, color 0.15s ease;
+    width: 100%;
+}
+
+.nav-dropdown-menu li a:hover {
+    /* background-color: rgba(217, 162, 62, 0.1); */
+    color: #D9A23E;
+}
+
+/* Button transitions */
+nav ul li button,
+nav ul li a.btn {
+    transition: all 0.15s ease-in-out;
+}
+
+/* Button icon color changes - only for secondary-outline */
+nav ul li .btn-secondary-outline svg path {
+    stroke: #fff;
+    transition: stroke 0.15s ease-in-out;
+}
+
+.nav.scrolled nav ul li .btn-secondary-outline svg path {
+    stroke: #060606;
+}
+
+/* Primary-outline button icons - maintain their own colors and hover states */
+nav ul li .btn-primary-outline svg path {
+    transition: stroke 0.15s ease-in-out;
+}
+
+.nav-link-btn-mobile {
+    display: none;
+}
+
+/* Burger menu styles for small screens */
+nav .burger-menu {
+    display: none;
+    cursor: pointer;
+    flex-direction: column;
+    gap: 4px;
+    transition: transform 0.3s ease;
+}
+
+nav .burger-menu .bar {
+    width: 25px;
+    height: 3px;
+    background-color: #fff;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.nav .burger-menu .bar {
+    background-color: #fff;
+}
+.nav.scrolled .burger-menu .bar {
+    background-color: #fff;
+}
+
+nav .burger-menu.open .bar:nth-child(1) {
+    transform: rotate(45deg) translate(5px, 5px);
+}
+
+nav .burger-menu.open .bar:nth-child(2) {
+    opacity: 0;
+}
+
+nav .burger-menu.open .bar:nth-child(3) {
+    transform: rotate(-45deg) translate(5px, -5px);
+}
+
+/* Responsive styles */
+@media (max-width: 1280px) {
+    nav .burger-menu {
+        display: flex;
+    }
+}
+
+/* Responsive styles */
+@media (max-width: 1280px) {
+    nav .burger-menu {
+        display: flex;
+    }
+
+    nav .btns-row {
+        display: none;
+    }
+
+    .nav-link-btn-mobile {
+        display: list-item;
+    }
+
+    nav ul.nav-links {
+        position: fixed;
+        top: 76px;
+        right: 0;
+        max-height: 0;
+        margin: 0 auto;
+        opacity: 0.6;
+        width: 100%;
+        display: flex; /* Added display property to improve flexbox usage */
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        background-color: #060606;
+        background-repeat: repeat;
+        gap: 42px;
+        transform: translateY(-10px); /* Slight initial translate to enhance effect */
+        transition: max-height 0.3s ease-in-out, padding 0.4s ease-in-out, opacity 0.3s ease-in-out, transform 0.4s ease;
+        box-shadow: 0 4px 4px -2px rgba(0, 0, 0, 0.1);
+        overflow: hidden; /* Ensures content is hidden when max-height is 0 */
+    }
+
+    nav ul.nav-links.open {
+        max-height: 90vh;
+        padding: 50px 0;
+        opacity: 1;
+        transform: translateY(20px); /* Restores translate position to default */
+    }
+
+    /* Dropdown styles for mobile */
+    .nav-dropdown-trigger {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .nav-dropdown-menu {
+        position: static;
+        margin-top: 8px;
+        width: 100%;
+        box-shadow: none;
+        background-color: rgba(255, 255, 255, 0.05);
+        border-radius: 8px;
+    }
+
+    .nav-dropdown-menu li a {
+        text-align: center;
+        padding: 0;
+    }
+}
+
+@media (max-width: 640px) {
+    .nav-logo {
+        transform: scale(1) !important;
+    }
+}

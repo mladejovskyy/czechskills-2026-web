@@ -1,0 +1,247 @@
+footer {
+    background-size: cover;
+    background-position: center;
+    background-image: url('/images/footer-bg.webp');
+}
+
+footer .row {
+    padding-top: 48px;
+    display: grid;
+    grid-template-columns: 1.5fr 0.8fr auto auto auto;
+    gap: 80px;
+    align-items: start;
+}
+
+footer .bottom .group {
+    display: grid;
+    gap: 16px;
+}
+
+footer .bottom .row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 0;
+}
+
+
+footer img.logo {
+    max-height: 186px;
+    cursor: pointer;
+}
+
+footer .soc-row {
+    display: grid;
+    margin-top: 24px;
+    gap: 16px;
+    grid-template-columns: repeat(4, 64px);
+}
+
+footer .footer-box {
+    width: 64px;
+    height: 64px;
+    display: grid;
+    place-items: center;
+    background-color: #1B1B1B;
+    border-radius: 4px;
+}
+
+footer .footer-box-sm {
+    width: 32px;
+    height: 32px;
+    display: grid;
+    place-items: center;
+    background-color: #1B1B1B;
+    border-radius: 2px;
+}
+
+footer p.ico {
+    margin-top: 20px;
+    font-size: 14px;
+    color: rgba(0, 0, 0, 0.7);
+}
+
+footer h2 {
+    font-weight: 600;
+    font-size: 22px;
+} 
+
+footer ul {
+    display: grid;
+    gap: 12px;
+    margin-top: 12px;
+}
+
+footer ul li {
+    color: #CDCDCD;
+    cursor: pointer;
+    font-weight: 400;
+    transition: color 0.2s ease-in-out;
+}
+
+footer ul li:hover {
+    color: #D9A23E;
+}
+
+footer a {
+    color: #CDCDCD;
+    transition: color 0.2s ease-in-out;
+}
+footer a:hover {
+    color: #D9A23E;
+}
+
+footer .link {
+    color: #CDCDCD;
+    display: grid;
+    gap: 8px;
+    grid-template-columns: 32px auto;
+    align-items: center;
+    font-weight: 400;
+    transition: color 0.15s ease-in-out;
+}
+
+footer .link:hover {
+    color: #D9A23E;
+}
+
+footer .row-two {
+    margin-top: 24px;
+    display: flex;
+    justify-content: end;
+    gap: 16px;
+}
+
+footer .author span {
+    color: #D9A23E;
+    font-weight: 400;
+}
+
+footer .copyright {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    color: rgba(255, 255, 255, 0.5);
+}
+
+footer .author {
+    display: flex;
+    gap: 3px;
+    align-items: center;
+}
+
+footer .author a {
+    font-weight: 600;
+}
+
+footer hr {
+    margin-top: 24px;
+    opacity: 0.5;
+}
+
+footer .misc {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+footer .misc * {
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 14px;
+    cursor: pointer;
+}
+
+footer .misc *:hover {
+    color: #D9A23E;
+}
+
+@media (max-width: 1280px) {
+    footer .row {
+        grid-template-columns: 240px auto 180px 1fr;
+        gap: 56px;
+    }
+
+    footer .group.empty {
+        display: none;
+    }
+
+    footer .soc-row {
+        grid-template-columns: repeat(4, 48px);
+    }
+
+    footer .footer-box {
+        width: 48px;
+        height: 48px;
+        border-radius: 3px;
+    }
+
+    footer .soc-row .footer-box svg {
+        width: 24px;
+        height: 24px;
+    }
+}
+
+@media (max-width: 1024px) {
+    footer .row {
+        grid-template-columns: 1fr 1fr;
+        gap: 40px;
+    }
+
+    footer .bottom .row {
+        flex-direction: column;
+        gap: 16px;
+    }
+
+    footer .row-two {
+        margin-top: 32px;
+        flex-wrap: wrap;
+    }
+
+    footer .bottom .group {
+        place-items: center;
+    }
+}
+
+@media (max-width: 768px) {
+    footer .row .item.right ul {
+        flex-direction: column;
+        margin-top: 12px;
+        gap: 22px;
+    }
+
+    footer .item.right h3.sm-show {
+        display: initial;
+        font-weight: 400;
+        font-size: 1.3rem;
+    }
+
+    footer .bottom .row {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    footer .bottom .row * {
+        text-align: center;
+    }
+
+    footer .row-two {
+        justify-content: start;
+        gap: 12px;
+    }
+}
+
+@media (max-width: 640px) {
+    footer .row {
+        grid-template-columns: 1fr;
+    }
+
+    footer .misc {
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    footer .misc .line {
+        width: 48px;
+        height: 1px;
+        margin: 0 auto;
+    }
+}
