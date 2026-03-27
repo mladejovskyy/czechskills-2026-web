@@ -5,13 +5,14 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { ImageUpload } from "@/components/ui/image-upload";
 import { createVehicle, updateVehicle } from "@/actions/kellycars/vehicles";
-import type { KellyCarsVehicle } from "@/generated/prisma/client";
+import type { KellyCarsVehicle, Media } from "@/generated/prisma/client";
 import { toast } from "sonner";
 
 type Props = {
   tenantId: string;
-  vehicle?: KellyCarsVehicle;
+  vehicle?: KellyCarsVehicle & { image: Media | null };
 };
 
 function slugify(text: string) {
@@ -26,6 +27,15 @@ function slugify(text: string) {
 export function VehicleForm({ tenantId, vehicle }: Props) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
+  const [image, setImage] = useState<{
+    id: string;
+    url: string;
+    alt: string;
+  } | null>(
+    vehicle?.image
+      ? { id: vehicle.image.id, url: vehicle.image.url, alt: vehicle.image.alt }
+      : null
+  );
   const isEdit = !!vehicle;
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -33,21 +43,23 @@ export function VehicleForm({ tenantId, vehicle }: Props) {
     setLoading(true);
 
     const form = new FormData(e.currentTarget);
-    const data = {
-      brand: form.get("brand") as string,
-      model: form.get("model") as string,
-      year: Number(form.get("year")),
-      slug: slugify(`${form.get("brand")}-${form.get("model")}-${form.get("year")}`),
-      category: form.get("category") as string,
-      seats: Number(form.get("seats")),
-      fuelType: form.get("fuelType") as string,
-      transmission: form.get("transmission") as "MANUAL" | "AUTOMATIC",
-      pricePerDay: Number(form.get("pricePerDay")),
-      description: (form.get("description") as string) || undefined,
-      available: form.get("available") === "on",
-    };
 
     try {
+      const data = {
+        brand: form.get("brand") as string,
+        model: form.get("model") as string,
+        year: Number(form.get("year")),
+        slug: slugify(`${form.get("brand")}-${form.get("model")}-${form.get("year")}`),
+        category: form.get("category") as string,
+        seats: Number(form.get("seats")),
+        fuelType: form.get("fuelType") as string,
+        transmission: form.get("transmission") as "MANUAL" | "AUTOMATIC",
+        pricePerDay: Number(form.get("pricePerDay")),
+        description: (form.get("description") as string) || undefined,
+        available: form.get("available") === "on",
+        imageId: image?.id,
+      };
+
       if (isEdit) {
         await updateVehicle(vehicle.id, data);
         toast.success("Vůz byl úspěšně upraven.");
@@ -66,6 +78,16 @@ export function VehicleForm({ tenantId, vehicle }: Props) {
 
   return (
     <form onSubmit={handleSubmit} className="grid max-w-2xl gap-6">
+      {/* Image upload */}
+      <ImageUpload
+        tenantId={tenantId}
+        tenantSlug="kellycars"
+        folder="vozy"
+        label="Fotografie vozu"
+        value={image}
+        onChange={setImage}
+      />
+
       <div className="grid grid-cols-2 gap-4">
         <div className="space-y-1.5">
           <Label htmlFor="brand">Značka</Label>

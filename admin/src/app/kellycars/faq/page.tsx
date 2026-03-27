@@ -9,7 +9,8 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { CreateCategoryDialog } from "./_create-category-dialog";
+import { CreateCategoryDialog } from "@/components/Faq/CreateCategoryDialog";
+import { DeleteCategoryButton } from "@/components/Faq/DeleteCategoryButton";
 
 const TENANT_SLUG = "kellycars";
 
@@ -34,8 +35,15 @@ export default async function FaqPage() {
       ) : (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {categories.map((cat) => (
-            <Link key={cat.id} href={`/kellycars/faq/${cat.id}`}>
-              <Card className="transition-colors hover:bg-muted/40">
+            <Card key={cat.id} className="relative transition-colors hover:bg-muted/40">
+              <div className="absolute right-3 top-3 z-10">
+                <DeleteCategoryButton
+                  categoryId={cat.id}
+                  categoryName={cat.name}
+                  itemCount={cat.items.length}
+                />
+              </div>
+              <Link href={`/kellycars/faq/${cat.id}`}>
                 <CardHeader>
                   <CardTitle>{cat.name}</CardTitle>
                   {cat.description && (
@@ -52,8 +60,8 @@ export default async function FaqPage() {
                         : "otázek"}
                   </p>
                 </CardContent>
-              </Card>
-            </Link>
+              </Link>
+            </Card>
           ))}
         </div>
       )}

@@ -12,8 +12,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { CreateItemDialog } from "./_create-item-dialog";
-import { FaqItemActions } from "./_faq-item-actions";
+import { CreateItemDialog } from "@/components/Faq/CreateItemDialog";
+import { FaqItemActions } from "@/components/Faq/FaqItemActions";
 
 const TENANT_SLUG = "kellycars";
 
