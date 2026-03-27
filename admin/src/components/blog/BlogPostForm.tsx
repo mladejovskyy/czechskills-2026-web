@@ -17,7 +17,7 @@ import {
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { toast } from "sonner";
-import { createBlogPost } from "@/actions/blog-posts";
+import { createBlogPost, updateBlogPost } from "@/actions/blog-posts";
 
 function slugify(text: string) {
   return text
@@ -30,6 +30,24 @@ function slugify(text: string) {
 
 type Category = { id: string; name: string };
 type Tag = { id: string; name: string };
+type MediaRef = { id: string; url: string; alt: string };
+type FaqRef = { question: string; answer: string };
+
+type InitialData = {
+  id: string;
+  title: string;
+  slug: string;
+  categoryId: string;
+  excerpt: string | null;
+  content: string;
+  coverImage: MediaRef | null;
+  videoUrl: string | null;
+  voiceOverUrl: string | null;
+  metaTitle: string | null;
+  metaDesc: string | null;
+  tagIds: string[];
+  faqs: FaqRef[];
+};
 
 type BlogPostFormProps = {
   tenantId: string;
@@ -38,6 +56,7 @@ type BlogPostFormProps = {
   categories: Category[];
   tags: Tag[];
   backHref: string;
+  initial?: InitialData;
 };
 
 export function BlogPostForm({
@@ -47,29 +66,29 @@ export function BlogPostForm({
   categories,
   tags,
   backHref,
+  initial,
 }: BlogPostFormProps) {
   const router = useRouter();
+  const isEdit = !!initial;
   const [loading, setLoading] = useState(false);
-  const [slugTouched, setSlugTouched] = useState(false);
+  const [slugTouched, setSlugTouched] = useState(isEdit);
 
-  const [coverImage, setCoverImage] = useState<{
-    id: string;
-    url: string;
-    alt: string;
-  } | null>(null);
-  const [title, setTitle] = useState("");
-  const [slug, setSlug] = useState("");
-  const [categoryId, setCategoryId] = useState("");
-  const [excerpt, setExcerpt] = useState("");
-  const [content, setContent] = useState("");
-  const [videoUrl, setVideoUrl] = useState("");
-  const [voiceOverUrl, setVoiceOverUrl] = useState("");
-  const [metaTitle, setMetaTitle] = useState("");
-  const [metaDesc, setMetaDesc] = useState("");
-  const [selectedTagIds, setSelectedTagIds] = useState<string[]>([]);
-
-  // FAQ inline
-  const [faqs, setFaqs] = useState<{ question: string; answer: string }[]>([]);
+  const [coverImage, setCoverImage] = useState<MediaRef | null>(
+    initial?.coverImage ?? null
+  );
+  const [title, setTitle] = useState(initial?.title ?? "");
+  const [slug, setSlug] = useState(initial?.slug ?? "");
+  const [categoryId, setCategoryId] = useState(initial?.categoryId ?? "");
+  const [excerpt, setExcerpt] = useState(initial?.excerpt ?? "");
+  const [content, setContent] = useState(initial?.content ?? "");
+  const [videoUrl, setVideoUrl] = useState(initial?.videoUrl ?? "");
+  const [voiceOverUrl, setVoiceOverUrl] = useState(initial?.voiceOverUrl ?? "");
+  const [metaTitle, setMetaTitle] = useState(initial?.metaTitle ?? "");
+  const [metaDesc, setMetaDesc] = useState(initial?.metaDesc ?? "");
+  const [selectedTagIds, setSelectedTagIds] = useState<string[]>(
+    initial?.tagIds ?? []
+  );
+  const [faqs, setFaqs] = useState<FaqRef[]>(initial?.faqs ?? []);
 
   function handleTitleChange(value: string) {
     setTitle(value);
@@ -104,33 +123,38 @@ export function BlogPostForm({
     }
     setLoading(true);
 
+    const payload = {
+      categoryId,
+      title,
+      slug: slug || slugify(title),
+      excerpt: excerpt || undefined,
+      content,
+      coverImageId: coverImage?.id,
+      videoUrl: videoUrl || undefined,
+      voiceOverUrl: voiceOverUrl || undefined,
+      metaTitle: metaTitle || undefined,
+      metaDesc: metaDesc || undefined,
+      tagIds: selectedTagIds.length > 0 ? selectedTagIds : undefined,
+      faqs:
+        faqs.length > 0
+          ? faqs
+              .filter((f) => f.question && f.answer)
+              .map((f, i) => ({ ...f, sortOrder: i }))
+          : undefined,
+    };
+
     try {
-      await createBlogPost({
-        tenantId,
-        authorId,
-        categoryId,
-        title,
-        slug: slug || slugify(title),
-        excerpt: excerpt || undefined,
-        content,
-        coverImageId: coverImage?.id,
-        videoUrl: videoUrl || undefined,
-        voiceOverUrl: voiceOverUrl || undefined,
-        metaTitle: metaTitle || undefined,
-        metaDesc: metaDesc || undefined,
-        tagIds: selectedTagIds.length > 0 ? selectedTagIds : undefined,
-        faqs:
-          faqs.length > 0
-            ? faqs
-                .filter((f) => f.question && f.answer)
-                .map((f, i) => ({ ...f, sortOrder: i }))
-            : undefined,
-      });
-      toast.success("Článek vytvořen");
+      if (isEdit) {
+        await updateBlogPost(initial.id, payload);
+        toast.success("Článek aktualizován");
+      } else {
+        await createBlogPost({ ...payload, tenantId, authorId });
+        toast.success("Článek vytvořen");
+      }
       router.push(backHref);
       router.refresh();
     } catch {
-      toast.error("Nepodařilo se vytvořit článek");
+      toast.error(isEdit ? "Nepodařilo se aktualizovat článek" : "Nepodařilo se vytvořit článek");
     } finally {
       setLoading(false);
     }
@@ -321,7 +345,11 @@ export function BlogPostForm({
 
       <div className="flex gap-3">
         <Button type="submit" disabled={loading}>
-          {loading ? "Vytvářím..." : "Vytvořit článek"}
+          {loading
+            ? "Ukládám..."
+            : isEdit
+              ? "Uložit změny"
+              : "Vytvořit článek"}
         </Button>
         <Button type="button" variant="outline" onClick={() => router.push(backHref)}>
           Zrušit

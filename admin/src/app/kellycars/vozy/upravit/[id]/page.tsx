@@ -18,12 +18,14 @@ export default async function UpravitVuzPage({
   const vehicle = await getVehicle(id);
   if (!vehicle) notFound();
 
+  const serialized = { ...vehicle, pricePerDay: Number(vehicle.pricePerDay) };
+
   return (
     <div className="flex flex-col gap-6 p-6">
       <h1>
         Upravit vůz – {vehicle.brand} {vehicle.model}
       </h1>
-      <VehicleForm tenantId={tenant.id} vehicle={vehicle} />
+      <VehicleForm tenantId={tenant.id} vehicle={serialized} />
     </div>
   );
 }

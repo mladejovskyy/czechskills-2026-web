@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
-import { uploadImage, deleteImage } from "@/actions/upload";
+import { uploadImage, deleteImage, updateMediaAlt } from "@/actions/upload";
 import { ImagePlusIcon, XIcon, Loader2Icon } from "lucide-react";
 
 type UploadedMedia = {
@@ -81,23 +81,42 @@ export function ImageUpload({
     <div className="flex flex-col gap-2">
       <Label>{label}</Label>
       {value ? (
-        <div className="relative w-full max-w-sm overflow-hidden rounded-lg border">
-          <Image
-            src={value.url}
-            alt={value.alt}
-            width={400}
-            height={225}
-            className="h-auto w-full object-cover"
+        <div className="flex max-w-sm flex-col gap-2">
+          <div className="relative w-full overflow-hidden rounded-lg border">
+            <Image
+              src={value.url}
+              alt={value.alt}
+              width={400}
+              height={225}
+              className="h-auto w-full object-cover"
+            />
+            <Button
+              type="button"
+              variant="destructive"
+              size="icon-sm"
+              className="absolute top-2 right-2"
+              onClick={handleRemove}
+            >
+              <XIcon className="size-4" />
+            </Button>
+          </div>
+          <Input
+            placeholder="Alt text"
+            value={alt}
+            onChange={(e) => {
+              setAlt(e.target.value);
+              onChange({ ...value, alt: e.target.value });
+            }}
+            onBlur={async () => {
+              if (alt !== value.alt) {
+                try {
+                  await updateMediaAlt(value.id, alt);
+                } catch {
+                  toast.error("Nepodařilo se uložit alt text");
+                }
+              }
+            }}
           />
-          <Button
-            type="button"
-            variant="destructive"
-            size="icon-sm"
-            className="absolute top-2 right-2"
-            onClick={handleRemove}
-          >
-            <XIcon className="size-4" />
-          </Button>
         </div>
       ) : (
         <div className="flex flex-col gap-2">

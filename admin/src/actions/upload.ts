@@ -31,6 +31,10 @@ export async function uploadImage(formData: FormData) {
   return media;
 }
 
+export async function updateMediaAlt(mediaId: string, alt: string) {
+  return prisma.media.update({ where: { id: mediaId }, data: { alt } });
+}
+
 export async function deleteImage(mediaId: string) {
   const media = await prisma.media.findUnique({ where: { id: mediaId } });
   if (!media) return;

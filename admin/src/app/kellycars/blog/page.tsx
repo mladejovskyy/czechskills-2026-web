@@ -12,6 +12,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { CreateCategoryDialog } from "@/components/blog/CreateCategoryDialog";
+import { BlogPostActions } from "@/components/blog/BlogPostActions";
 
 const TENANT_SLUG = "kellycars";
 
@@ -40,9 +42,12 @@ export default async function BlogListPage() {
     <div className="flex flex-col gap-6 p-6">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-semibold">Blog</h1>
-        <Link href="/kellycars/blog/new">
-          <Button>Nový článek</Button>
-        </Link>
+        <div className="flex gap-2">
+          <CreateCategoryDialog tenantId={tenant.id} />
+          <Link href="/kellycars/blog/new">
+            <Button>Nový článek</Button>
+          </Link>
+        </div>
       </div>
 
       {posts.length === 0 ? (
@@ -56,6 +61,7 @@ export default async function BlogListPage() {
               <TableHead>Autor</TableHead>
               <TableHead>Stav</TableHead>
               <TableHead>Vytvořeno</TableHead>
+              <TableHead className="w-12" />
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -78,6 +84,9 @@ export default async function BlogListPage() {
                 </TableCell>
                 <TableCell className="text-muted-foreground">
                   {post.createdAt.toLocaleDateString("cs-CZ")}
+                </TableCell>
+                <TableCell>
+                  <BlogPostActions post={{ id: post.id, status: post.status }} />
                 </TableCell>
               </TableRow>
             ))}

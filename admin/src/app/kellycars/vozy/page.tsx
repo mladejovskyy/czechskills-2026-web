@@ -20,7 +20,12 @@ export default async function VozyPage({
   const params = await searchParams;
   const vehicles = await getVehiclesByTenant(tenant.id);
 
-  const filtered = vehicles.filter((v) => {
+  const serialized = vehicles.map((v) => ({
+    ...v,
+    pricePerDay: Number(v.pricePerDay),
+  }));
+
+  const filtered = serialized.filter((v) => {
     if (params.kategorie && v.category !== params.kategorie) return false;
     if (params.palivo && v.fuelType !== params.palivo) return false;
     if (params.prevodovka && v.transmission !== params.prevodovka) return false;
@@ -37,8 +42,8 @@ export default async function VozyPage({
     return true;
   });
 
-  const categories = [...new Set(vehicles.map((v) => v.category))];
-  const fuelTypes = [...new Set(vehicles.map((v) => v.fuelType))];
+  const categories = [...new Set(serialized.map((v) => v.category))];
+  const fuelTypes = [...new Set(serialized.map((v) => v.fuelType))];
 
   return (
     <div className="flex flex-col gap-6 p-6">

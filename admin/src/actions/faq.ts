@@ -31,6 +31,13 @@ export async function getFaqCategory(id: string) {
   });
 }
 
+export async function getFaqCategoryBySlug(tenantId: string, slug: string) {
+  return prisma.faqCategory.findUnique({
+    where: { tenantId_slug: { tenantId, slug } },
+    include: { items: { orderBy: { sortOrder: "asc" } } },
+  });
+}
+
 export async function createFaqCategory(data: CreateFaqCategoryInput) {
   return prisma.faqCategory.create({ data });
 }

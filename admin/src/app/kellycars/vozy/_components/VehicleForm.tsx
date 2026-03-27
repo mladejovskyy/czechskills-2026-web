@@ -12,7 +12,10 @@ import { toast } from "sonner";
 
 type Props = {
   tenantId: string;
-  vehicle?: KellyCarsVehicle & { image: Media | null };
+  vehicle?: Omit<KellyCarsVehicle, "pricePerDay"> & {
+    pricePerDay: number;
+    image: Media | null;
+  };
 };
 
 function slugify(text: string) {

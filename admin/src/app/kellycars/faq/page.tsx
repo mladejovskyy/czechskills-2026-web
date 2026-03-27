@@ -43,7 +43,7 @@ export default async function FaqPage() {
                   itemCount={cat.items.length}
                 />
               </div>
-              <Link href={`/kellycars/faq/${cat.id}`}>
+              <Link href={`/kellycars/faq/${cat.slug}`}>
                 <CardHeader>
                   <CardTitle>{cat.name}</CardTitle>
                   {cat.description && (
