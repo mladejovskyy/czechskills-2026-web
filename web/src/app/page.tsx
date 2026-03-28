@@ -182,7 +182,7 @@ export default async function Home() {
                     </div>
                     <div className="row">
                         {vehicles.length > 0 ? vehicles.slice(0, 3).map((car) => (
-                            <div className="item" key={car.id}>
+                            <Link href={`/vozy-pronajem/${car.slug}/`} className="item" key={car.id}>
                                 <div className="image-wrapper">
                                     {car.image ? (
                                         <Image
@@ -196,16 +196,19 @@ export default async function Home() {
                                     )}
                                 </div>
                                 <div className="info">
-                                    <div className="name-price">
-                                        <h3>{car.brand} {car.model}</h3>
-                                        <span className="price">{formatPrice(car.pricePerDay)}</span>
-                                    </div>
+                                    <h3>{car.brand} {car.model}</h3>
                                     <p className="subtitle">{car.category} • {car.year}</p>
-                                    <Button type="secondary" url={`/vozy-pronajem/${car.slug}/`} isArrow={true} ariaLabel={`Zobrazit ${car.brand} ${car.model}`}>
-                                        Zobrazit vozy
-                                    </Button>
+                                    <div className="specs">
+                                        <span>{car.seats} míst</span>
+                                        <span>{car.fuelType}</span>
+                                        <span>{car.transmission === "AUTOMATIC" ? "Automat" : "Manuál"}</span>
+                                    </div>
+                                    <div className="price-row">
+                                        <span className="price">{formatPrice(car.pricePerDay)}<small>/den</small></span>
+                                        <span className="cta">Zobrazit <IconArrow color="#B45309" width={14} height={14} /></span>
+                                    </div>
                                 </div>
-                            </div>
+                            </Link>
                         )) : (
                             <p>Žádné vozy k zobrazení.</p>
                         )}
