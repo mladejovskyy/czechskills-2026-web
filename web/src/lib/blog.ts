@@ -19,7 +19,7 @@ function extractYouTubeId(url: string): string | null {
 }
 
 export function embedYouTubeVideos(html: string): string {
-    return html.replace(/\{(https?:\/\/(?:www\.)?(?:youtube\.com|youtu\.be)\/[^\s}]+)\}/g, (_, url) => {
+    return html.replace(/\{(?:<a[^>]*>)?(https?:\/\/(?:www\.)?(?:youtube\.com|youtu\.be)\/[^\s<}]+)(?:<\/a>)?\}/g, (_, url) => {
         const id = extractYouTubeId(url);
         if (!id) return url;
         return `<div class="video-embed"><iframe src="https://www.youtube-nocookie.com/embed/${id}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe></div>`;
