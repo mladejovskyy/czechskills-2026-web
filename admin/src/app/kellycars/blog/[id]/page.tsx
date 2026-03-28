@@ -2,7 +2,6 @@ import { redirect, notFound } from "next/navigation";
 import { auth } from "@/lib/auth";
 import { getBlogPost } from "@/actions/blog-posts";
 import { getCategoriesByTenant } from "@/actions/categories";
-import { getTagsByTenant } from "@/actions/tags";
 import { BlogPostForm } from "@/components/blog/BlogPostForm";
 
 const TENANT_SLUG = "kellycars";
@@ -19,10 +18,9 @@ export default async function EditBlogPostPage({
   const tenant = session.user.tenants.find((t) => t.slug === TENANT_SLUG);
   if (!tenant) redirect("/");
 
-  const [post, categories, tags] = await Promise.all([
+  const [post, categories] = await Promise.all([
     getBlogPost(id),
     getCategoriesByTenant(tenant.id),
-    getTagsByTenant(tenant.id),
   ]);
 
   if (!post || post.tenantId !== tenant.id) notFound();
@@ -35,7 +33,6 @@ export default async function EditBlogPostPage({
         tenantSlug={TENANT_SLUG}
         authorId={session.user.id}
         categories={categories}
-        tags={tags}
         backHref="/kellycars/blog"
         initial={{
           id: post.id,
@@ -47,11 +44,10 @@ export default async function EditBlogPostPage({
           coverImage: post.coverImage
             ? { id: post.coverImage.id, url: post.coverImage.url, alt: post.coverImage.alt }
             : null,
-          videoUrl: post.videoUrl,
           voiceOverUrl: post.voiceOverUrl,
           metaTitle: post.metaTitle,
           metaDesc: post.metaDesc,
-          tagIds: post.tags.map((t) => t.id),
+          tagNames: post.tags.map((t) => t.name),
           faqs: post.faqs.map((f) => ({ question: f.question, answer: f.answer })),
         }}
       />

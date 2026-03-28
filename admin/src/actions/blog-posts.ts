@@ -18,7 +18,6 @@ type CreateBlogPostInput = {
   excerpt?: string;
   content: string;
   coverImageId?: string;
-  videoUrl?: string;
   voiceOverUrl?: string;
   metaTitle?: string;
   metaDesc?: string;
@@ -48,6 +47,31 @@ export async function createBlogPost(data: CreateBlogPostInput) {
 export async function updateBlogPost(id: string, data: UpdateBlogPostInput) {
   const { tagIds, faqs, ...rest } = data;
 
+  if (rest.slug) {
+    const existing = await prisma.blogPost.findUnique({
+      where: { id },
+      select: { slug: true, tenantId: true },
+    });
+
+    if (existing && existing.slug !== rest.slug) {
+      await prisma.redirect.upsert({
+        where: {
+          tenantId_fromPath: {
+            tenantId: existing.tenantId,
+            fromPath: `/blog/${existing.slug}`,
+          },
+        },
+        update: { toPath: `/blog/${rest.slug}` },
+        create: {
+          tenantId: existing.tenantId,
+          fromPath: `/blog/${existing.slug}`,
+          toPath: `/blog/${rest.slug}`,
+          type: "PERMANENT",
+        },
+      });
+    }
+  }
+
   return prisma.blogPost.update({
     where: { id },
     data: {
@@ -62,6 +86,29 @@ export async function updateBlogPost(id: string, data: UpdateBlogPostInput) {
 }
 
 export async function deleteBlogPost(id: string) {
+  const post = await prisma.blogPost.findUnique({
+    where: { id },
+    select: { slug: true, tenantId: true },
+  });
+
+  if (post) {
+    await prisma.redirect.upsert({
+      where: {
+        tenantId_fromPath: {
+          tenantId: post.tenantId,
+          fromPath: `/blog/${post.slug}`,
+        },
+      },
+      update: { toPath: "/blog", type: "PERMANENT" },
+      create: {
+        tenantId: post.tenantId,
+        fromPath: `/blog/${post.slug}`,
+        toPath: "/blog",
+        type: "PERMANENT",
+      },
+    });
+  }
+
   return prisma.blogPost.delete({ where: { id } });
 }
 

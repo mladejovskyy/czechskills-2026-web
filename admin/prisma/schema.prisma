@@ -103,7 +103,6 @@ model BlogPost {
   excerpt      String?
   content      String
   coverImageId String?        @map("cover_image_id")
-  videoUrl     String?        @map("video_url")
   voiceOverUrl String?        @map("voice_over_url")
   metaTitle    String?        @map("meta_title")
   metaDesc     String?        @map("meta_description")

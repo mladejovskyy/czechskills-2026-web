@@ -16,3 +16,21 @@ export async function createTag(data: {
 }) {
   return prisma.tag.create({ data });
 }
+
+function slugify(text: string) {
+  return text
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)/g, "");
+}
+
+export async function findOrCreateTag(tenantId: string, name: string) {
+  const slug = slugify(name);
+  const existing = await prisma.tag.findUnique({
+    where: { tenantId_slug: { tenantId, slug } },
+  });
+  if (existing) return existing;
+  return prisma.tag.create({ data: { tenantId, name, slug } });
+}

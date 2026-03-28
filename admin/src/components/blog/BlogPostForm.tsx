@@ -17,7 +17,9 @@ import {
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { toast } from "sonner";
+import { XIcon } from "lucide-react";
 import { createBlogPost, updateBlogPost } from "@/actions/blog-posts";
+import { findOrCreateTag } from "@/actions/tags";
 
 function slugify(text: string) {
   return text
@@ -29,7 +31,6 @@ function slugify(text: string) {
 }
 
 type Category = { id: string; name: string };
-type Tag = { id: string; name: string };
 type MediaRef = { id: string; url: string; alt: string };
 type FaqRef = { question: string; answer: string };
 
@@ -41,11 +42,10 @@ type InitialData = {
   excerpt: string | null;
   content: string;
   coverImage: MediaRef | null;
-  videoUrl: string | null;
   voiceOverUrl: string | null;
   metaTitle: string | null;
   metaDesc: string | null;
-  tagIds: string[];
+  tagNames: string[];
   faqs: FaqRef[];
 };
 
@@ -54,7 +54,6 @@ type BlogPostFormProps = {
   tenantSlug: string;
   authorId: string;
   categories: Category[];
-  tags: Tag[];
   backHref: string;
   initial?: InitialData;
 };
@@ -64,7 +63,6 @@ export function BlogPostForm({
   tenantSlug,
   authorId,
   categories,
-  tags,
   backHref,
   initial,
 }: BlogPostFormProps) {
@@ -81,13 +79,11 @@ export function BlogPostForm({
   const [categoryId, setCategoryId] = useState(initial?.categoryId ?? "");
   const [excerpt, setExcerpt] = useState(initial?.excerpt ?? "");
   const [content, setContent] = useState(initial?.content ?? "");
-  const [videoUrl, setVideoUrl] = useState(initial?.videoUrl ?? "");
   const [voiceOverUrl, setVoiceOverUrl] = useState(initial?.voiceOverUrl ?? "");
   const [metaTitle, setMetaTitle] = useState(initial?.metaTitle ?? "");
   const [metaDesc, setMetaDesc] = useState(initial?.metaDesc ?? "");
-  const [selectedTagIds, setSelectedTagIds] = useState<string[]>(
-    initial?.tagIds ?? []
-  );
+  const [tagNames, setTagNames] = useState<string[]>(initial?.tagNames ?? []);
+  const [tagInput, setTagInput] = useState("");
   const [faqs, setFaqs] = useState<FaqRef[]>(initial?.faqs ?? []);
 
   function handleTitleChange(value: string) {
@@ -95,10 +91,19 @@ export function BlogPostForm({
     if (!slugTouched) setSlug(slugify(value));
   }
 
-  function toggleTag(tagId: string) {
-    setSelectedTagIds((prev) =>
-      prev.includes(tagId) ? prev.filter((id) => id !== tagId) : [...prev, tagId]
-    );
+  function addTags(input: string) {
+    const newTags = input
+      .split(",")
+      .map((t) => t.trim())
+      .filter((t) => t && !tagNames.includes(t));
+    if (newTags.length > 0) {
+      setTagNames((prev) => [...prev, ...newTags]);
+    }
+    setTagInput("");
+  }
+
+  function removeTag(name: string) {
+    setTagNames((prev) => prev.filter((t) => t !== name));
   }
 
   function addFaq() {
@@ -123,6 +128,16 @@ export function BlogPostForm({
     }
     setLoading(true);
 
+    const resolvedTagIds =
+      tagNames.length > 0
+        ? await Promise.all(
+            tagNames.map(async (name) => {
+              const tag = await findOrCreateTag(tenantId, name);
+              return tag.id;
+            })
+          )
+        : undefined;
+
     const payload = {
       categoryId,
       title,
@@ -130,11 +145,10 @@ export function BlogPostForm({
       excerpt: excerpt || undefined,
       content,
       coverImageId: coverImage?.id,
-      videoUrl: videoUrl || undefined,
       voiceOverUrl: voiceOverUrl || undefined,
       metaTitle: metaTitle || undefined,
       metaDesc: metaDesc || undefined,
-      tagIds: selectedTagIds.length > 0 ? selectedTagIds : undefined,
+      tagIds: resolvedTagIds,
       faqs:
         faqs.length > 0
           ? faqs
@@ -232,44 +246,54 @@ export function BlogPostForm({
       <Separator />
 
       {/* Tags */}
-      {tags.length > 0 && (
-        <section className="flex flex-col gap-2">
-          <Label>Štítky</Label>
+      <section className="flex flex-col gap-2">
+        <Label>Štítky</Label>
+        {tagNames.length > 0 && (
           <div className="flex flex-wrap gap-2">
-            {tags.map((tag) => {
-              const selected = selectedTagIds.includes(tag.id);
-              return (
+            {tagNames.map((name) => (
+              <span
+                key={name}
+                className="inline-flex items-center gap-1 rounded-full border border-primary bg-primary/10 px-3 py-1 text-sm text-primary"
+              >
+                {name}
                 <button
-                  key={tag.id}
                   type="button"
-                  onClick={() => toggleTag(tag.id)}
-                  className={`rounded-full border px-3 py-1 text-sm transition-colors ${
-                    selected
-                      ? "border-primary bg-primary/10 text-primary"
-                      : "border-border text-muted-foreground hover:bg-muted"
-                  }`}
+                  onClick={() => removeTag(name)}
+                  className="ml-0.5 rounded-full p-0.5 hover:bg-primary/20"
                 >
-                  {tag.name}
+                  <XIcon className="size-3" />
                 </button>
-              );
-            })}
+              </span>
+            ))}
           </div>
-        </section>
-      )}
+        )}
+        <Input
+          placeholder="Zadejte štítky oddělené čárkou..."
+          value={tagInput}
+          onChange={(e) => {
+            const val = e.target.value;
+            if (val.endsWith(",")) {
+              addTags(val);
+            } else {
+              setTagInput(val);
+            }
+          }}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" && tagInput.trim()) {
+              e.preventDefault();
+              addTags(tagInput);
+            }
+          }}
+          onBlur={() => {
+            if (tagInput.trim()) addTags(tagInput);
+          }}
+        />
+      </section>
 
       <Separator />
 
       {/* Media URLs */}
       <section className="flex flex-col gap-4">
-        <div className="flex flex-col gap-1.5">
-          <Label htmlFor="videoUrl">Video URL</Label>
-          <Input
-            id="videoUrl"
-            type="url"
-            value={videoUrl}
-            onChange={(e) => setVideoUrl(e.target.value)}
-          />
-        </div>
         <div className="flex flex-col gap-1.5">
           <Label htmlFor="voiceOverUrl">Voice-over URL</Label>
           <Input
