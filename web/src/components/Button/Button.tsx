@@ -4,6 +4,7 @@ import React from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { scrollToTarget, goToAndScroll } from "@/utils/scroll";
+import IconArrow from "@/components/Svg/IconArrow";
 
 interface ButtonProps {
     type?: 'primary' | 'secondary';
@@ -51,7 +52,7 @@ export default function Button({
     const router = useRouter();
 
     const buttonClasses = `btn btn-${type} ${className}`.trim();
-    const arrowSrc = type === 'primary' ? '/images/icons/arrow-black.svg' : '/images/icons/arrow-white.svg';
+    const arrowColor = type === 'primary' ? '#0E0E0E' : '#fff';
 
     // Render icon - either as component or img
     const renderIcon = () => {
@@ -108,7 +109,7 @@ export default function Button({
                 >
                     {renderIcon()}
                     {children}
-                    {isArrow && <img src={arrowSrc} alt="" className="btn-arrow" />}
+                    {isArrow && <IconArrow color={arrowColor} className="btn-arrow" />}
                 </a>
             );
         }
@@ -124,7 +125,7 @@ export default function Button({
             >
                 {renderIcon()}
                 {children}
-                {isArrow && <img src={arrowSrc} alt="" className="btn-arrow" />}
+                {isArrow && <IconArrow color={arrowColor} className="btn-arrow" />}
             </Link>
         );
     }
@@ -140,7 +141,7 @@ export default function Button({
         >
             {renderIcon()}
             {children}
-            {isArrow && <img src={arrowSrc} alt="" className="btn-arrow" />}
+            {isArrow && <IconArrow color={arrowColor} className="btn-arrow" />}
         </button>
     );
 }

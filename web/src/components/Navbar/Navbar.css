@@ -12,8 +12,8 @@
 
 /* Background color change on scroll */
 .nav.scrolled {
-    background-color: #060606;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Small box-shadow on bottom */
+    background-color: #fff;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
     transform: translateY(0);
 }
 
@@ -67,7 +67,7 @@ nav ul {
 nav ul li, nav ul li a {
     list-style: none;
     cursor: pointer;
-    color: #fff;
+    color: #333;
     font-weight: 600;
     text-transform: uppercase;
     transition: color 0.15s ease-in-out;
@@ -111,11 +111,12 @@ nav ul li span {
     top: 100%;
     right: -40px;
     margin-top: 8px;
-    background-color: #060606;
+    background-color: #fff;
     backdrop-filter: blur(10px);
     padding: 16px 12px;
     min-width: 210px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+    border-radius: 12px;
     list-style: none;
     display: flex;
     flex-direction: column;
@@ -123,7 +124,7 @@ nav ul li span {
 }
 
 .nav.scrolled .nav-dropdown-menu {
-    background-color: #060606;
+    background-color: #fff;
 }
 
 .nav-dropdown-menu li {
@@ -134,7 +135,7 @@ nav ul li span {
 .nav-dropdown-menu li a {
     display: block;
     padding: 10px 20px;
-    color: #fff;
+    color: #333;
     text-transform: capitalize;
     text-align: center;
     transition: background-color 0.15s ease, color 0.15s ease;
@@ -188,10 +189,10 @@ nav .burger-menu .bar {
 }
 
 .nav .burger-menu .bar {
-    background-color: #fff;
+    background-color: #333;
 }
 .nav.scrolled .burger-menu .bar {
-    background-color: #fff;
+    background-color: #333;
 }
 
 nav .burger-menu.open .bar:nth-child(1) {
@@ -235,11 +236,11 @@ nav .burger-menu.open .bar:nth-child(3) {
         margin: 0 auto;
         opacity: 0.6;
         width: 100%;
-        display: flex; /* Added display property to improve flexbox usage */
+        display: flex;
         flex-direction: column;
         justify-content: center;
         align-items: center;
-        background-color: #060606;
+        background-color: #fff;
         background-repeat: repeat;
         gap: 42px;
         transform: translateY(-10px); /* Slight initial translate to enhance effect */
@@ -266,7 +267,7 @@ nav .burger-menu.open .bar:nth-child(3) {
         margin-top: 8px;
         width: 100%;
         box-shadow: none;
-        background-color: rgba(255, 255, 255, 0.05);
+        background-color: rgba(0, 0, 0, 0.03);
         border-radius: 8px;
     }
 

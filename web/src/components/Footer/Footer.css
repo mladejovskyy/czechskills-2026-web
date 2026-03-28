@@ -64,7 +64,16 @@ footer p.ico {
 footer h2 {
     font-weight: 600;
     font-size: 22px;
-} 
+    color: #fff;
+}
+
+footer h3 {
+    color: #fff;
+}
+
+footer p {
+    color: #CDCDCD;
+}
 
 footer ul {
     display: grid;

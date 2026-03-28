@@ -120,7 +120,7 @@ export default function Navbar({subpage}: NavbarProps) {
                                 <IconChevron
                                     width={24}
                                     height={24}
-                                    stroke="#fff"
+                                    color="#333"
                                     className={`nav-dropdown-icon ${openDropdown === 'faq' ? 'open' : ''}`}
                                 />
                             </div>
