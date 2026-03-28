@@ -132,6 +132,7 @@ model BlogPostFaq {
   id         String @id @default(cuid())
   blogPostId String @map("blog_post_id")
   question   String
+  slug       String @default("")
   answer     String
   sortOrder  Int    @default(0) @map("sort_order")
 

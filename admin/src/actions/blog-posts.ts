@@ -5,6 +5,7 @@ import { BlogPostStatus } from "@/generated/prisma/client";
 
 type BlogPostFaqInput = {
   question: string;
+  slug: string;
   answer: string;
   sortOrder?: number;
 };

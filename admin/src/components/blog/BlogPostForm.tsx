@@ -32,7 +32,7 @@ function slugify(text: string) {
 
 type Category = { id: string; name: string };
 type MediaRef = { id: string; url: string; alt: string };
-type FaqRef = { question: string; answer: string };
+type FaqRef = { question: string; slug: string; answer: string };
 
 type InitialData = {
   id: string;
@@ -107,12 +107,19 @@ export function BlogPostForm({
   }
 
   function addFaq() {
-    setFaqs((prev) => [...prev, { question: "", answer: "" }]);
+    setFaqs((prev) => [...prev, { question: "", slug: "", answer: "" }]);
   }
 
-  function updateFaq(index: number, field: "question" | "answer", value: string) {
+  function updateFaq(index: number, field: "question" | "slug" | "answer", value: string) {
     setFaqs((prev) =>
-      prev.map((faq, i) => (i === index ? { ...faq, [field]: value } : faq))
+      prev.map((faq, i) => {
+        if (i !== index) return faq;
+        const updated = { ...faq, [field]: value };
+        if (field === "question") {
+          updated.slug = slugify(value);
+        }
+        return updated;
+      })
     );
   }
 
@@ -356,6 +363,11 @@ export function BlogPostForm({
               placeholder="Otázka"
               value={faq.question}
               onChange={(e) => updateFaq(i, "question", e.target.value)}
+            />
+            <Input
+              placeholder="Slug"
+              value={faq.slug}
+              onChange={(e) => updateFaq(i, "slug", e.target.value)}
             />
             <Textarea
               placeholder="Odpověď"

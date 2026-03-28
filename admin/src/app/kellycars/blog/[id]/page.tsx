@@ -48,7 +48,7 @@ export default async function EditBlogPostPage({
           metaTitle: post.metaTitle,
           metaDesc: post.metaDesc,
           tagNames: post.tags.map((t) => t.name),
-          faqs: post.faqs.map((f) => ({ question: f.question, answer: f.answer })),
+          faqs: post.faqs.map((f) => ({ question: f.question, slug: f.slug, answer: f.answer })),
         }}
       />
     </div>
