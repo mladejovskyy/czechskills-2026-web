@@ -1,15 +1,17 @@
 import Footer from "@/components/Footer/Footer";
 import Navbar from "@/components/Navbar/Navbar";
 import Button from "@/components/Button/Button";
+import BlogCard from "@/components/Blog/BlogCard";
 import IconDocument from "@/components/Svg/IconDocument";
 import IconCurator from "@/components/Svg/IconCurator";
 import IconDiamond from "@/components/Svg/IconDiamond";
 import IconPrice from "@/components/Svg/IconPrice";
 import IconArrow from "@/components/Svg/IconArrow";
+import JsonLd from "@/components/JsonLd";
 import Link from "next/link";
 import Image from "next/image";
-import { getBlogPosts, getVehicles } from "@/lib/api";
-import type { Vehicle, BlogPost } from "@/types/api";
+import { getBlogPosts, getVehicles, getFaqCategories } from "@/lib/api";
+import type { Vehicle, BlogPost, FaqCategory } from "@/types/api";
 import './homepage.css';
 
 const features = [
@@ -42,21 +44,95 @@ function formatPrice(price: string | number): string {
 export default async function Home() {
     let vehicles: Vehicle[] = [];
     let blogPosts: BlogPost[] = [];
+    let faqCategories: FaqCategory[] = [];
 
     try {
-        const [vehiclesRes, blogRes] = await Promise.all([
+        const [vehiclesRes, blogRes, faqRes] = await Promise.all([
             getVehicles(),
             getBlogPosts({ limit: "3" }),
+            getFaqCategories(),
         ]);
         vehicles = vehiclesRes.data;
         blogPosts = blogRes.data;
+        faqCategories = faqRes.data;
     } catch (e) {
         console.error("Failed to fetch data:", e);
     }
 
+    const organizationLd = {
+        "@context": "https://schema.org",
+        "@type": "AutoRental",
+        name: "Editorial Archive Car Rental",
+        description: "Kurátorský výběr historických a moderních vozidel k pronájmu. Zapomeňte na běžné půjčovny.",
+        url: "https://kellycars.cz",
+        currenciesAccepted: "CZK",
+        paymentAccepted: "Cash, Credit Card",
+        priceRange: "$$",
+    };
+
+    const websiteLd = {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        name: "Editorial Archive Car Rental",
+        url: "https://kellycars.cz",
+    };
+
+    const vehicleListLd = vehicles.length > 0 ? {
+        "@context": "https://schema.org",
+        "@type": "ItemList",
+        name: "Dostupné vozy k pronájmu",
+        numberOfItems: vehicles.length,
+        itemListElement: vehicles.slice(0, 3).map((car, i) => ({
+            "@type": "ListItem",
+            position: i + 1,
+            item: {
+                "@type": "Car",
+                name: `${car.brand} ${car.model}`,
+                url: `https://kellycars.cz/vozy-pronajem/${car.slug}/`,
+                vehicleModelDate: String(car.year),
+                brand: { "@type": "Brand", name: car.brand },
+                model: car.model,
+                ...(car.image && { image: car.image.url }),
+                offers: {
+                    "@type": "Offer",
+                    price: Number(car.pricePerDay),
+                    priceCurrency: "CZK",
+                    unitText: "den",
+                    availability: "https://schema.org/InStock",
+                },
+            },
+        })),
+    } : null;
+
+    const blogListLd = blogPosts.length > 0 ? {
+        "@context": "https://schema.org",
+        "@type": "ItemList",
+        name: "Blog – Život v pohybu",
+        itemListElement: blogPosts.map((post, i) => ({
+            "@type": "ListItem",
+            position: i + 1,
+            item: {
+                "@type": "BlogPosting",
+                headline: post.title,
+                url: `https://kellycars.cz/blog/${post.category.slug}/${post.slug}/`,
+                ...(post.publishedAt && { datePublished: post.publishedAt }),
+                ...(post.coverImage && { image: post.coverImage.url }),
+                author: {
+                    "@type": "Person",
+                    name: post.author.name || post.author.username,
+                },
+            },
+        })),
+    } : null;
+
     return (
         <>
-            <Navbar />
+            <JsonLd data={organizationLd} />
+            <JsonLd data={websiteLd} />
+            {vehicleListLd && <JsonLd data={vehicleListLd} />}
+            {blogListLd && <JsonLd data={blogListLd} />}
+
+            <Navbar faqCategories={faqCategories} />
 
             {/* HERO */}
             <section className="hero" id="hero">
@@ -104,11 +180,6 @@ export default async function Home() {
                         <h2>Vyberte si svou legendu</h2>
                         <span className="tag">Aktuální archiv</span>
                     </div>
-                    <div className="filters">
-                        <button>Všechny vozy</button>
-                        <button className="active">Classeek</button>
-                        <button>Modern classy</button>
-                    </div>
                     <div className="row">
                         {vehicles.length > 0 ? vehicles.slice(0, 3).map((car) => (
                             <div className="item" key={car.id}>
@@ -153,23 +224,7 @@ export default async function Home() {
                     </div>
                     <div className="row">
                         {blogPosts.length > 0 ? blogPosts.map((post) => (
-                            <Link href={`/blog/${post.slug}/`} className="item" key={post.id}>
-                                <div className="image-wrapper">
-                                    {post.coverImage ? (
-                                        <Image
-                                            src={post.coverImage.url}
-                                            alt={post.coverImage.alt}
-                                            fill
-                                            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                                        />
-                                    ) : (
-                                        <div className="placeholder">{post.title}</div>
-                                    )}
-                                </div>
-                                <span className="tag">{post.category.name}</span>
-                                <h3>{post.title}</h3>
-                                {post.excerpt && <p>{post.excerpt}</p>}
-                            </Link>
+                            <BlogCard key={post.id} post={post} />
                         )) : (
                             <p>Žádné články k zobrazení.</p>
                         )}

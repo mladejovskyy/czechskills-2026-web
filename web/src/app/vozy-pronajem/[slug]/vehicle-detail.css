@@ -1,0 +1,339 @@
+/*======== VEHICLE HERO ========*/
+.vehicleHero {
+    padding: 160px 0 64px;
+}
+
+.vehicleHero .back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: #B45309;
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 32px;
+    transition: color 0.2s;
+}
+
+.vehicleHero .back-link svg {
+    transform: rotate(180deg);
+}
+
+.vehicleHero .back-link:hover {
+    color: #92400E;
+}
+
+/*======== GRID LAYOUT ========*/
+.vehicleGrid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 56px;
+    align-items: start;
+}
+
+/*======== IMAGE ========*/
+.vehicleImage {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 4/3;
+    border-radius: 20px;
+    overflow: hidden;
+    background: #F5F5F5;
+}
+
+.vehicleImage img {
+    object-fit: cover;
+}
+
+.vehicleImage .placeholder {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #F3F4F6, #E5E7EB);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #bbb;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+}
+
+/*======== INFO ========*/
+.vehicleInfo .category-tag {
+    color: #B45309;
+    text-transform: uppercase;
+    font-size: 13px;
+    letter-spacing: 0.15em;
+    font-weight: 600;
+}
+
+.vehicleInfo h1 {
+    font-size: 40px;
+    text-transform: none;
+    font-family: 'Baskervville SC', serif;
+    line-height: 1.15;
+    margin-top: 8px;
+}
+
+.vehicleInfo .year {
+    color: #999;
+    font-size: 16px;
+    margin-top: 4px;
+}
+
+/*======== PRICE BOX ========*/
+.price-box {
+    margin-top: 28px;
+    padding: 20px 24px;
+    background: #FFFBF0;
+    border: 1px solid #F0EADE;
+    border-radius: 14px;
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+}
+
+.price-box .price-value {
+    font-size: 32px;
+    font-weight: 700;
+    color: #D4941C;
+    font-family: 'DM Sans', sans-serif;
+}
+
+.price-box .price-unit {
+    font-size: 16px;
+    color: #999;
+    font-weight: 400;
+}
+
+/*======== SPECS ========*/
+.vehicleInfo .specs {
+    margin-top: 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    border: 1px solid #F0F0F0;
+    border-radius: 14px;
+    overflow: hidden;
+}
+
+.vehicleInfo .spec {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 20px;
+    border-bottom: 1px solid #F0F0F0;
+}
+
+.vehicleInfo .spec:last-child {
+    border-bottom: none;
+}
+
+.vehicleInfo .spec-label {
+    font-size: 14px;
+    color: #666;
+}
+
+.vehicleInfo .spec-value {
+    font-size: 14px;
+    font-weight: 600;
+    color: #111;
+}
+
+/*======== DESCRIPTION ========*/
+.vehicleInfo .description {
+    margin-top: 24px;
+}
+
+.vehicleInfo .description p {
+    color: #555;
+    font-size: 15px;
+    line-height: 1.7;
+}
+
+/*======== ACTIONS ========*/
+.vehicleInfo .actions {
+    margin-top: 32px;
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.vehicleInfo .actions .btn-outline {
+    color: #333;
+    border-color: #E5E5E5;
+    background: #fff;
+    backdrop-filter: none;
+}
+
+.vehicleInfo .actions .btn-outline:hover {
+    border-color: #ccc;
+    background: #FAFAFA;
+}
+
+/*======== OTHER VEHICLES ========*/
+.vehicleOthers {
+    padding: 0 0 80px;
+    border-top: 1px solid #F0F0F0;
+    padding-top: 64px;
+}
+
+.vehicleOthers .heading-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 32px;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+
+.vehicleOthers .see-all {
+    color: #111;
+    font-weight: 600;
+    font-size: 15px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: color 0.2s;
+}
+
+.vehicleOthers .see-all:hover {
+    color: #D4941C;
+}
+
+.vehicleOthers .row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+}
+
+.vehicleOthers .card {
+    background: #fff;
+    border-radius: 16px;
+    overflow: hidden;
+    border: 1px solid #F0F0F0;
+    transition: box-shadow 0.2s, transform 0.2s;
+    text-decoration: none;
+    color: inherit;
+    display: block;
+}
+
+.vehicleOthers .card:hover {
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+    transform: translateY(-2px);
+}
+
+.vehicleOthers .card .image-wrapper {
+    background: #F5F5F5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 200px;
+    position: relative;
+    overflow: hidden;
+}
+
+.vehicleOthers .card .image-wrapper img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.vehicleOthers .card .image-wrapper .placeholder {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #F3F4F6, #E5E7EB);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #bbb;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+}
+
+.vehicleOthers .card .info {
+    padding: 20px 24px;
+}
+
+.vehicleOthers .card .info .name-price {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 12px;
+}
+
+.vehicleOthers .card .info h3 {
+    font-size: 17px;
+    font-weight: 600;
+    font-family: 'DM Sans', sans-serif;
+    text-transform: none;
+    color: #111;
+}
+
+.vehicleOthers .card .info .price {
+    font-weight: 700;
+    font-size: 16px;
+    color: #D4941C;
+    white-space: nowrap;
+}
+
+.vehicleOthers .card .info .price span {
+    font-weight: 400;
+    font-size: 12px;
+    color: #999;
+}
+
+.vehicleOthers .card .info .subtitle {
+    color: #999;
+    font-size: 13px;
+    margin-top: 4px;
+}
+
+/*======== RESPONSIVE ========*/
+@media (max-width: 1024px) {
+    .vehicleGrid {
+        gap: 40px;
+    }
+
+    .vehicleInfo h1 {
+        font-size: 34px;
+    }
+
+    .vehicleOthers .row {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .vehicleHero {
+        padding: 140px 0 48px;
+    }
+
+    .vehicleGrid {
+        grid-template-columns: 1fr;
+        gap: 32px;
+    }
+
+    .vehicleInfo h1 {
+        font-size: 30px;
+    }
+
+    .price-box .price-value {
+        font-size: 28px;
+    }
+
+    .vehicleOthers .row {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 475px) {
+    .vehicleInfo .actions {
+        flex-direction: column;
+    }
+
+    .vehicleInfo .actions .btn {
+        width: 100%;
+        justify-content: center;
+    }
+}

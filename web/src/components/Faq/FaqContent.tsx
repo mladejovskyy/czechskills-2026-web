@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, type ReactNode } from 'react';
+import { type ReactNode } from 'react';
 import type { FaqCategory } from '@/types/api';
 import IconChevron from '@/components/Svg/IconChevron';
 import IconSparkle from '@/components/Svg/IconSparkle';
@@ -23,25 +23,15 @@ function getCategoryIcon(slug: string, color: string): ReactNode {
 
 interface FaqContentProps {
     categories: FaqCategory[];
+    activeCategorySlug: string;
+    activeFaqSlug?: string;
 }
 
-export default function FaqContent({ categories }: FaqContentProps) {
-    const [activeCategoryId, setActiveCategoryId] = useState(categories[0]?.id ?? '');
-    const [openItemId, setOpenItemId] = useState<string | null>(
-        categories[0]?.items[0]?.id ?? null
-    );
-
-    const activeCategory = categories.find(c => c.id === activeCategoryId);
-
-    const toggleItem = (id: string) => {
-        setOpenItemId(prev => prev === id ? null : id);
-    };
-
-    const switchCategory = (id: string) => {
-        setActiveCategoryId(id);
-        const cat = categories.find(c => c.id === id);
-        setOpenItemId(cat?.items[0]?.id ?? null);
-    };
+export default function FaqContent({ categories, activeCategorySlug, activeFaqSlug }: FaqContentProps) {
+    const activeCategory = categories.find(c => c.slug === activeCategorySlug);
+    const activeItem = activeFaqSlug
+        ? activeCategory?.items.find(i => i.slug === activeFaqSlug)
+        : null;
 
     return (
         <div className="row">
@@ -49,16 +39,16 @@ export default function FaqContent({ categories }: FaqContentProps) {
             <aside className="sidebar">
                 <div className="sidebar-nav">
                     {categories.map((cat) => {
-                        const isActive = cat.id === activeCategoryId;
+                        const isActive = cat.slug === activeCategorySlug;
                         return (
-                            <button
+                            <Link
                                 key={cat.id}
+                                href={`/faq/${cat.slug}/`}
                                 className={`sidebar-item ${isActive ? 'active' : ''}`}
-                                onClick={() => switchCategory(cat.id)}
                             >
                                 {getCategoryIcon(cat.slug, isActive ? '#fff' : '#92400E')}
                                 <span>{cat.name}</span>
-                            </button>
+                            </Link>
                         );
                     })}
                 </div>
@@ -67,13 +57,18 @@ export default function FaqContent({ categories }: FaqContentProps) {
             {/* Accordion */}
             <div className="items">
                 {activeCategory?.items.map((item) => {
-                    const isOpen = openItemId === item.id;
+                    const isOpen = item.slug === activeFaqSlug;
+                    const href = isOpen
+                        ? `/faq/${activeCategorySlug}/`
+                        : `/faq/${activeCategorySlug}/${item.slug}/`;
+
                     return (
                         <div key={item.id} className={`accordion ${isOpen ? 'open' : ''}`}>
-                            <button
+                            <Link
+                                href={href}
                                 className="accordion-header"
-                                onClick={() => toggleItem(item.id)}
                                 aria-expanded={isOpen}
+                                scroll={false}
                             >
                                 <span>{item.question}</span>
                                 <IconChevron
@@ -82,7 +77,7 @@ export default function FaqContent({ categories }: FaqContentProps) {
                                     color="#999"
                                     className={`accordion-icon ${isOpen ? 'open' : ''}`}
                                 />
-                            </button>
+                            </Link>
                             {isOpen && (
                                 <div className="accordion-body">
                                     <div dangerouslySetInnerHTML={{ __html: item.answer }} />

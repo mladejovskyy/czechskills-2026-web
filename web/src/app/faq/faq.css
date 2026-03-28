@@ -1,6 +1,6 @@
 /*======== FAQ HERO ========*/
 .faqHero {
-    padding: 120px 0 48px;
+    padding: 160px 0 48px;
 }
 
 .faqHero .tag {
@@ -27,7 +27,7 @@
 
 @media (max-width: 768px) {
     .faqHero {
-        padding: 100px 0 32px;
+        padding: 140px 0 32px;
     }
 
     .faqHero h1 {
@@ -129,6 +129,7 @@
     font-weight: 600;
     font-family: 'DM Sans', sans-serif;
     color: #111;
+    text-decoration: none;
     text-align: left;
 }
 

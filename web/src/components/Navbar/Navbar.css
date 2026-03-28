@@ -40,11 +40,7 @@ nav {
     /*min-height: 36px;*/
     /*max-height: 36px;*/
     cursor: pointer;
-    transform: scale(1.4);
     transition: transform 0.2s ease;
-}
-.nav.scrolled .nav-logo {
-    transform: scale(1);
 }
 
 /* Logo color transitions */

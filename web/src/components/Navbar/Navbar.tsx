@@ -7,18 +7,17 @@ import Link from "next/link";
 import IconChevron from "@/components/Svg/IconChevron";
 import {motion, AnimatePresence} from "framer-motion";
 
-interface NavbarProps {
-    subpage?: boolean;
+interface FaqNavCategory {
+    name: string;
+    slug: string;
 }
 
-const faqCategories = [
-    {label: 'Pronájem', slug: 'pronajem'},
-    {label: 'Platby a kauce', slug: 'platby-a-kauce'},
-    {label: 'Pojištění', slug: 'pojisteni'},
-    {label: 'Podmínky', slug: 'podminky'},
-];
+interface NavbarProps {
+    subpage?: boolean;
+    faqCategories?: FaqNavCategory[];
+}
 
-export default function Navbar({subpage}: NavbarProps) {
+export default function Navbar({subpage, faqCategories = []}: NavbarProps) {
     const [menuOpen, setMenuOpen] = useState<boolean>(false);
     const [scrolled, setScrolled] = useState<boolean>(false);
     const [openDropdown, setOpenDropdown] = useState<string | null>(null);
@@ -139,7 +138,7 @@ export default function Navbar({subpage}: NavbarProps) {
                                                     href={`/faq/${cat.slug}/`}
                                                     onClick={() => setOpenDropdown(null)}
                                                 >
-                                                    {cat.label}
+                                                    {cat.name}
                                                 </Link>
                                             </li>
                                         ))}
@@ -165,7 +164,7 @@ export default function Navbar({subpage}: NavbarProps) {
                 </div>
                 <div className="btns-row" data-aos="fade-down" data-aos-once="true" data-aos-delay="500">
                     <Button
-                        type={scrolled || menuOpen ? "primary" : "secondary"}
+                        type="primary"
                         url="/vozy-pronajem/"
                         ariaLabel="Zobrazit dostupná auta"
                     >
